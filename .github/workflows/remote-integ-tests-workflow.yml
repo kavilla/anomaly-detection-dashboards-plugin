@@ -10,8 +10,8 @@ on:
     branches:
       - main
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: 'main'
-  OPENSEARCH_VERSION: '2.0.0-rc1-SNAPSHOT'
+  OPENSEARCH_DASHBOARDS_VERSION: '2.0'
+  OPENSEARCH_VERSION: '2.0.0-SNAPSHOT'
 jobs:
   test-without-security:
     name: Run integ tests without security
@@ -26,7 +26,7 @@ jobs:
         with:
           path: anomaly-detection
           repository: opensearch-project/anomaly-detection
-          ref: 'main'
+          ref: '2.0'
       - name: Run Opensearch with plugin
         run: |
           cd anomaly-detection
@@ -71,22 +71,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: opensearch-dashboards-functional-test
-          repository: opensearch-project/opensearch-dashboards-functional-test
-          ref: 'main' # TODO: change to a branch when the branching strategy in that repo has been established
-      - name: Get Cypress version
-        id: cypress_version
-        run: |
-          echo "::set-output name=cypress_version::$(cat ./opensearch-dashboards-functional-test/package.json | jq '.devDependencies.cypress' | tr -d '"')"
-      - name: Cache Cypress
-        id: cache-cypress
-        uses: actions/cache@v1
-        with:
-          path: ~/.cache/Cypress
-          key: cypress-cache-v2-${{ runner.os }}-${{ hashFiles('**/package.json') }}
-        env:
-          CYPRESS_INSTALL_BINARY: ${{ steps.cypress_version.outputs.cypress_version }}
-      - run: npx cypress cache list
-      - run: npx cypress cache path
+          repository: kavilla/opensearch-dashboards-functional-test.git
+          ref: 'avillk/npm' # TODO: change to a branch when the branching strategy in that repo has been established
       - name: Run AD cypress tests
         uses: cypress-io/github-action@v2
         with:
